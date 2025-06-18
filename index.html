@@ -4,73 +4,85 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Financial Literacy Portfolio</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
   <style>
     body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to bottom, #d6f5d6, #f0fff0);
       margin: 0;
-      font-family: 'Inter', sans-serif;
-      background: url('https://www.transparenttextures.com/patterns/green-dust-and-scratches.png'), linear-gradient(#d2f3c3, #a9e5a3);
-      background-size: cover;
-      padding: 20px;
+      padding: 0;
     }
     header {
-      background-color: #2f6f3e;
+      background-color: #4caf50;
       color: white;
-      padding: 20px;
+      padding: 1rem;
       text-align: center;
-      border-radius: 10px;
-      margin-bottom: 30px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
     }
-    .section {
+    main {
+      padding: 1rem;
+      max-width: 900px;
+      margin: auto;
+    }
+    section {
       background-color: white;
-      border-radius: 16px;
-      padding: 20px;
-      margin-bottom: 25px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      border-left: 6px solid #58b368;
+      border-radius: 1rem;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      padding: 1rem;
+      margin-bottom: 2rem;
     }
-    .section textarea {
+    h2 {
+      color: #2e7d32;
+    }
+    textarea {
       width: 100%;
-      height: 150px;
-      padding: 10px;
-      font-size: 1rem;
-      border-radius: 8px;
+      min-height: 150px;
+      padding: 0.5rem;
+      margin-top: 0.5rem;
+      border-radius: 0.5rem;
       border: 1px solid #ccc;
-      margin-top: 10px;
       resize: vertical;
+      font-size: 1rem;
+    }
+    input[type="file"] {
+      margin-top: 0.5rem;
+    }
+    img.preview {
+      display: block;
+      max-width: 100%;
+      height: auto;
+      margin-top: 0.5rem;
+      border-radius: 0.5rem;
     }
     .buttons {
       text-align: center;
-      margin-top: 20px;
+      margin: 2rem 0;
     }
     button {
-      background-color: #58b368;
+      background-color: #4caf50;
       color: white;
-      padding: 10px 20px;
+      padding: 0.6rem 1.2rem;
       border: none;
-      border-radius: 8px;
-      font-size: 1rem;
-      margin: 5px;
+      border-radius: 0.5rem;
       cursor: pointer;
+      margin: 0.5rem;
+      font-size: 1rem;
     }
     button:hover {
-      background-color: #3d8c4b;
+      background-color: #388e3c;
     }
   </style>
 </head>
 <body>
   <header>
-    <h1>💰 Financial Literacy 10 Portfolio</h1>
-    <p>By momo1001-op</p>
+    <h1>Financial Literacy 10 Portfolio</h1>
   </header>
-
-  <div id="content"></div>
-
+  <main id="portfolio"></main>
   <div class="buttons">
-    <button onclick="downloadAnswers()">Download My Work</button>
-    <input type="file" id="upload" style="display:none" accept="application/json" onchange="uploadAnswers(event)" />
-    <button onclick="document.getElementById('upload').click()">Upload Previous Work</button>
+    <button onclick="saveProgress()">Save Progress</button>
+    <button onclick="downloadProgress()">Download Progress</button>
+    <input type="file" onchange="uploadProgress(event)" accept="application/json">
   </div>
 
   <script>
@@ -84,52 +96,90 @@
       "FL10.7 – Investment Options Overview",
       "FL10.8 – Credit and Responsible Borrowing",
       "FL10.9 – Financial and Personal Information Security",
-      "FL10.10 – Future Aspirations Plan"
+      "FL10.10 – Future Aspirations Plan",
     ];
 
-    const content = document.getElementById("content");
-    outcomes.forEach((outcome, i) => {
-      const saved = localStorage.getItem(`fl10_${i}`) || "";
-      content.innerHTML += `
-        <div class="section">
-          <h2>${outcome}</h2>
-          <textarea id="outcome_${i}" oninput="saveAnswer(${i})">${saved}</textarea>
-        </div>
-      `;
-    });
+    function createPortfolio() {
+      const container = document.getElementById('portfolio');
+      outcomes.forEach((title, i) => {
+        const section = document.createElement('section');
 
-    function saveAnswer(index) {
-      const value = document.getElementById(`outcome_${index}`).value;
-      localStorage.setItem(`fl10_${index}`, value);
+        section.innerHTML = `
+          <h2>${title}</h2>
+          <textarea id="text${i}" placeholder="Type your reflection here..."></textarea>
+          <input type="file" accept="image/*" onchange="previewImage(event, ${i})">
+          <img id="img${i}" class="preview" style="display:none" />
+        `;
+        container.appendChild(section);
+      });
     }
 
-    function downloadAnswers() {
-      const data = {};
-      outcomes.forEach((_, i) => {
-        data[`FL10.${i + 1}`] = document.getElementById(`outcome_${i}`).value;
+    function previewImage(event, i) {
+      const file = event.target.files[0];
+      const reader = new FileReader();
+      reader.onload = function () {
+        const img = document.getElementById(`img${i}`);
+        img.src = reader.result;
+        img.style.display = 'block';
+      }
+      reader.readAsDataURL(file);
+    }
+
+    function saveProgress() {
+      const data = outcomes.map((_, i) => ({
+        text: document.getElementById(`text${i}`).value,
+        img: document.getElementById(`img${i}`).src || ""
+      }));
+      localStorage.setItem('finLitPortfolio', JSON.stringify(data));
+      alert("Progress saved to this browser.");
+    }
+
+    function loadProgress() {
+      const data = JSON.parse(localStorage.getItem('finLitPortfolio')) || [];
+      data.forEach((entry, i) => {
+        document.getElementById(`text${i}`).value = entry.text || "";
+        if (entry.img) {
+          const img = document.getElementById(`img${i}`);
+          img.src = entry.img;
+          img.style.display = 'block';
+        }
       });
-      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+    }
+
+    function downloadProgress() {
+      const data = outcomes.map((_, i) => ({
+        text: document.getElementById(`text${i}`).value,
+        img: document.getElementById(`img${i}`).src || ""
+      }));
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
+      const a = document.createElement('a');
       a.href = url;
-      a.download = "my_fin_lit_portfolio.json";
+      a.download = 'finlit-progress.json';
       a.click();
     }
 
-    function uploadAnswers(event) {
+    function uploadProgress(event) {
+      const file = event.target.files[0];
       const reader = new FileReader();
-      reader.onload = function(e) {
-        const data = JSON.parse(e.target.result);
-        outcomes.forEach((_, i) => {
-          const key = `FL10.${i + 1}`;
-          if (data[key]) {
-            document.getElementById(`outcome_${i}`).value = data[key];
-            localStorage.setItem(`fl10_${i}`, data[key]);
+      reader.onload = function () {
+        const data = JSON.parse(reader.result);
+        data.forEach((entry, i) => {
+          document.getElementById(`text${i}`).value = entry.text || "";
+          if (entry.img) {
+            const img = document.getElementById(`img${i}`);
+            img.src = entry.img;
+            img.style.display = 'block';
           }
         });
-      };
-      reader.readAsText(event.target.files[0]);
+        localStorage.setItem('finLitPortfolio', JSON.stringify(data));
+        alert("Progress loaded.");
+      }
+      reader.readAsText(file);
     }
+
+    createPortfolio();
+    loadProgress();
   </script>
 </body>
 </html>
