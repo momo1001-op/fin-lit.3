@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Financial Literacy Portfolio</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: url('https://www.transparenttextures.com/patterns/green-dust-and-scratches.png') repeat, linear-gradient(to right, #d4fc79, #96e6a1);
+      background-blend-mode: overlay;
+    }
+
+    header {
+      background-color: #2e7d32;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      position: sticky;
+      top: 0;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    section {
+      background-color: rgba(255, 255, 255, 0.95);
+      margin: 20px;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    textarea {
+      width: 100%;
+      height: 200px;
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      resize: vertical;
+      font-family: inherit;
+    }
+
+    input[type="file"] {
+      margin-top: 10px;
+    }
+
+    img.preview {
+      max-width: 100%;
+      margin-top: 10px;
+      border-radius: 8px;
+    }
+
+    .decoration {
+      position: absolute;
+      z-index: 0;
+      opacity: 0.1;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>📒 Financial Literacy 10 Portfolio</h1>
+    <p>By: Mohammad Bin Rizwan</p>
+  </header>
+
+  <script>
+    const outcomes = [
+      "FL10.1 – Personal Financial Values Reflection",
+      "FL10.2 – Well-being and Financial Health",
+      "FL10.3 – Financial Institution Comparison",
+      "FL10.4 – Income Exploration",
+      "FL10.5 – Budgeting Exercise",
+      "FL10.6 – Savings Strategy",
+      "FL10.7 – Investment Options Overview",
+      "FL10.8 – Credit and Responsible Borrowing",
+      "FL10.9 – Financial and Personal Information Security",
+      "FL10.10 – Future Aspirations Plan"
+    ];
+
+    window.onload = () => {
+      const container = document.createElement('main');
+      document.body.appendChild(container);
+
+      outcomes.forEach((title, index) => {
+        const section = document.createElement('section');
+        const h2 = document.createElement('h2');
+        h2.textContent = title;
+
+        const textarea = document.createElement('textarea');
+        const saved = localStorage.getItem(`outcome-${index}`);
+        if (saved) textarea.value = saved;
+
+        textarea.oninput = () => {
+          localStorage.setItem(`outcome-${index}`, textarea.value);
+        };
+
+        const fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.accept = 'image/*';
+
+        const img = document.createElement('img');
+        img.className = 'preview';
+        img.style.display = 'none';
+
+        fileInput.onchange = (e) => {
+          const file = e.target.files[0];
+          if (!file) return;
+          const reader = new FileReader();
+          reader.onload = () => {
+            img.src = reader.result;
+            img.style.display = 'block';
+          };
+          reader.readAsDataURL(file);
+        };
+
+        section.appendChild(h2);
+        section.appendChild(textarea);
+        section.appendChild(fileInput);
+        section.appendChild(img);
+
+        container.appendChild(section);
+      });
+    }
+  </script>
+</body>
+
+</html>
