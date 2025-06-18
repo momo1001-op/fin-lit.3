@@ -1,182 +1,190 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Financial Literacy Portfolio</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js">
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: url('https://www.transparenttextures.com/patterns/diamond-upholstery.png');
-      padding: 20px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to bottom, #d6f5d6, #f0fff0);
       margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #4caf50;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+      position: sticky;
+      top: 0;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
+    main {
+      padding: 1rem;
+      max-width: 900px;
+      margin: auto;
     }
     section {
-      background-color: #fff;
-      margin: 20px auto;
-      padding: 20px;
-      max-width: 900px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      border-left: 6px solid #4CAF50;
-      border-radius: 10px;
-      position: relative;
-    }
-    section::before {
-      content: '💰';
-      position: absolute;
-      left: -30px;
-      top: 20px;
-      font-size: 24px;
+      background-color: white;
+      border-radius: 1rem;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      padding: 1rem;
+      margin-bottom: 2rem;
+      overflow: auto;
     }
     h2 {
-      color: #333;
+      color: #2e7d32;
     }
-    canvas {
+    textarea {
+      width: 100%;
+      min-height: 150px;
+      padding: 0.5rem;
+      margin-top: 0.5rem;
+      border-radius: 0.5rem;
+      border: 1px solid #ccc;
+      resize: vertical;
+      font-size: 1rem;
+      box-sizing: border-box;
       display: block;
-      max-width: 100%;
-      margin: 20px auto;
+      margin-bottom: 1rem;
     }
-    img {
+    input[type="file"] {
+      margin-top: 0.5rem;
+    }
+    img.preview {
+      display: block;
       max-width: 100%;
       height: auto;
-      display: block;
-      margin: 10px auto;
+      margin-top: 0.5rem;
+      border-radius: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    .buttons {
+      text-align: center;
+      margin: 2rem 0;
+    }
+    button {
+      background-color: #4caf50;
+      color: white;
+      padding: 0.6rem 1.2rem;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      margin: 0.5rem;
+      font-size: 1rem;
+    }
+    button:hover {
+      background-color: #388e3c;
     }
   </style>
 </head>
-
 <body>
+  <header>
+    <h1>Financial Literacy 10 Portfolio</h1>
+  </header>
+  <main id="portfolio"></main>
+  <div class="buttons">
+    <button onclick="saveProgress()">Save Progress</button>
+    <button onclick="downloadProgress()">Download Progress</button>
+    <input type="file" onchange="uploadProgress(event)" accept="application/json">
+  </div>
 
-  <h1 style="text-align: center;">My Financial Literacy Portfolio</h1>
-
-  <section>
-    <h2>Saving Style Based on Values</h2>
-    <p>Growing up, money wasn’t just something we used — it was something that came with a lot of thought...</p>
-    <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Saving Habits Icon">
-  </section>
-
-  <section>
-    <h2>Money & Mental Health</h2>
-    <p>Money can mess with your head for real. If you don’t have enough or you're stressing about bills...</p>
-    <img src="https://cdn-icons-png.flaticon.com/512/2702/2702134.png" alt="Mental Health Icon">
-  </section>
-
-  <section>
-    <h2>Bank Comparison</h2>
-    <canvas id="bankChart" width="600" height="300"></canvas>
-  </section>
-
-  <section>
-    <h2>Career Choices</h2>
-    <p>Here’s 3 income options I looked at: Freelancing, Game Designer, and Teaching...</p>
-    <img src="https://cdn-icons-png.flaticon.com/512/2721/2721264.png" alt="Career Path Icon">
-  </section>
-
-  <section>
-    <h2>Monthly Budget</h2>
-    <canvas id="budgetChart" width="600" height="300"></canvas>
-  </section>
-
-  <section>
-    <h2>Savings Goals</h2>
-    <canvas id="savingsChart" width="600" height="300"></canvas>
-  </section>
-
-  <section>
-    <h2>Investment Options</h2>
-    <img src="https://cdn-icons-png.flaticon.com/512/2972/2972291.png" alt="Investing Icon">
-  </section>
-
-  <section>
-    <h2>Credit Types</h2>
-    <img src="https://cdn-icons-png.flaticon.com/512/2612/2612061.png" alt="Credit Types Icon">
-  </section>
-
-  <section>
-    <h2>Security & Identity Theft</h2>
-    <img src="https://cdn-icons-png.flaticon.com/512/2920/2920310.png" alt="Cybersecurity Icon">
-  </section>
-
-  <section>
-    <h2>Future Aspirations Plan</h2>
-    <img src="https://cdn-icons-png.flaticon.com/512/747/747545.png" alt="Future Plan Icon">
-  </section>
-
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
-    const bankChart = new Chart(document.getElementById('bankChart').getContext('2d'), {
-      type: 'bar',
-      data: {
-        labels: ['Debit Fees', 'Savings Interest', 'Mortgage Rates'],
-        datasets: [
-          {
-            label: 'TD Bank',
-            data: [3, 1.2, 4.5],
-            backgroundColor: '#f44336'
-          },
-          {
-            label: 'Affinity Credit Union',
-            data: [1, 1.0, 3.2],
-            backgroundColor: '#4CAF50'
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        scales: {
-          y: {
-            beginAtZero: true,
-            title: {
-              display: true,
-              text: 'Rate / Fee (%)'
-            }
-          }
-        }
-      }
-    });
+    const outcomes = [
+      "FL10.1 – Personal Financial Values Reflection",
+      "FL10.2 – Well-being and Financial Health",
+      "FL10.3 – Financial Institution Comparison",
+      "FL10.4 – Income Exploration",
+      "FL10.5 – Budgeting Exercise",
+      "FL10.6 – Savings Strategy",
+      "FL10.7 – Investment Options Overview",
+      "FL10.8 – Credit and Responsible Borrowing",
+      "FL10.9 – Financial and Personal Information Security",
+      "FL10.10 – Future Aspirations Plan",
+    ];
 
-    const budgetChart = new Chart(document.getElementById('budgetChart').getContext('2d'), {
-      type: 'pie',
-      data: {
-        labels: ['Rent + Bills', 'Food', 'Transport', 'Savings', 'Fun/Extras', 'Phone/Internet'],
-        datasets: [{
-          data: [700, 250, 100, 300, 150, 100],
-          backgroundColor: ['#f44336', '#2196F3', '#FFC107', '#4CAF50', '#9C27B0', '#FF9800']
-        }]
-      },
-      options: {
-        plugins: {
-          legend: {
-            position: 'bottom'
-          }
-        }
-      }
-    });
+    function createPortfolio() {
+      const container = document.getElementById('portfolio');
+      outcomes.forEach((title, i) => {
+        const section = document.createElement('section');
 
-    const savingsChart = new Chart(document.getElementById('savingsChart').getContext('2d'), {
-      type: 'line',
-      data: {
-        labels: ['1 Year', '5 Years', '10+ Years'],
-        datasets: [{
-          label: 'Savings Goal ($)',
-          data: [500, 5000, 20000],
-          borderColor: '#4CAF50',
-          backgroundColor: 'rgba(76, 175, 80, 0.1)',
-          fill: true,
-          tension: 0.4
-        }]
-      },
-      options: {
-        scales: {
-          y: {
-            beginAtZero: true
-          }
-        }
+        section.innerHTML = `
+          <h2>${title}</h2>
+          <textarea id="text${i}" placeholder="Type your reflection here..."></textarea>
+          <input type="file" accept="image/*" onchange="previewImage(event, ${i})">
+          <img id="img${i}" class="preview" style="display:none" />
+        `;
+        container.appendChild(section);
+      });
+    }
+
+    function previewImage(event, i) {
+      const file = event.target.files[0];
+      const reader = new FileReader();
+      reader.onload = function () {
+        const img = document.getElementById(`img${i}`);
+        img.src = reader.result;
+        img.style.display = 'block';
       }
-    });
+      reader.readAsDataURL(file);
+    }
+
+    function saveProgress() {
+      const data = outcomes.map((_, i) => ({
+        text: document.getElementById(`text${i}`).value,
+        img: document.getElementById(`img${i}`).src || ""
+      }));
+      localStorage.setItem('finLitPortfolio', JSON.stringify(data));
+      alert("Progress saved to this browser.");
+    }
+
+    function loadProgress() {
+      const data = JSON.parse(localStorage.getItem('finLitPortfolio')) || [];
+      data.forEach((entry, i) => {
+        document.getElementById(`text${i}`).value = entry.text || "";
+        if (entry.img) {
+          const img = document.getElementById(`img${i}`);
+          img.src = entry.img;
+          img.style.display = 'block';
+        }
+      });
+    }
+
+    function downloadProgress() {
+      const data = outcomes.map((_, i) => ({
+        text: document.getElementById(`text${i}`).value,
+        img: document.getElementById(`img${i}`).src || ""
+      }));
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'finlit-progress.json';
+      a.click();
+    }
+
+    function uploadProgress(event) {
+      const file = event.target.files[0];
+      const reader = new FileReader();
+      reader.onload = function () {
+        const data = JSON.parse(reader.result);
+        data.forEach((entry, i) => {
+          document.getElementById(`text${i}`).value = entry.text || "";
+          if (entry.img) {
+            const img = document.getElementById(`img${i}`);
+            img.src = entry.img;
+            img.style.display = 'block';
+          }
+        });
+        localStorage.setItem('finLitPortfolio', JSON.stringify(data));
+        alert("Progress loaded.");
+      }
+      reader.readAsText(file);
+    }
+
+    createPortfolio();
+    loadProgress();
   </script>
 </body>
-
 </html>
